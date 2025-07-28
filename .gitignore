@@ -163,4 +163,3 @@ cython_debug/
 
 # Mac platform-specific
 .DS_Store
-*pdf
