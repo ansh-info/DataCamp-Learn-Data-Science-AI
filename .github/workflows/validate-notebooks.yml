@@ -1,0 +1,47 @@
+name: Validate notebooks (no execution)
+
+on:
+  push:
+    paths:
+      - "**/*.ipynb"
+  pull_request:
+    paths:
+      - "**/*.ipynb"
+  workflow_dispatch: {} # allow manual run from Actions tab
+
+jobs:
+  validate-notebooks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install nbformat
+        run: |
+          pip install nbformat nbconvert
+
+      - name: Check notebook validity
+        run: |
+          python - <<'EOF'
+          import sys, json
+          from pathlib import Path
+
+          errors = False
+          for nb in Path(".").rglob("*.ipynb"):
+              if ".ipynb_checkpoints" in str(nb):
+                  continue
+              try:
+                  with open(nb, "r", encoding="utf-8") as f:
+                      json.load(f)
+                  print(f"{nb} is valid")
+              except Exception as e:
+                  print(f"{nb} is invalid: {e}")
+                  errors = True
+          if errors:
+              sys.exit(1)
+          EOF
