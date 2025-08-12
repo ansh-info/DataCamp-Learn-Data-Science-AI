@@ -2,11 +2,7 @@ name: Validate notebooks (no execution)
 
 on:
   push:
-    paths:
-      - "**/*.ipynb"
   pull_request:
-    paths:
-      - "**/*.ipynb"
   workflow_dispatch: {} # allow manual run from Actions tab
 
 jobs:
